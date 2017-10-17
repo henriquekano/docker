@@ -12,7 +12,7 @@ RUN set -xe \
 WORKDIR /var/www/html
 
  # Download opencart
-ENV OPENCART_VER 1.5.6.4
+ARG OPENCART_VER=2.2.0.0
 ENV OPENCART_URL https://github.com/opencart/opencart/archive/${OPENCART_VER}.tar.gz
 ENV OPENCART_FILE opencart.tar.gz
 
@@ -26,14 +26,6 @@ RUN set -xe \
     && chown -R www-data:www-data .
 
  # Download pagarme code
-ENV PAGARME_MODULE_URL https://github.com/pagarme/pagarme-opencart/archive/master.zip
-RUN set -xe \
-    && curl -sSL ${PAGARME_MODULE_URL} -o master.zip \
-    && unzip master.zip \
-    && rm ./master.zip \
-    && cp -r pagarme-opencart-master/API/1.5.x/upload/* ./ && cp -r pagarme-opencart-master/Checkout\ Pagar.Me/1.5.x/upload/* ./ \
-    && rm -rf pagarme-opencart-master
+ADD ./install_opencart.sh ./install_opencart.sh
+RUN ./install_opencart.sh $OPENCART_VER
 
-RUN set -xe \
-    && mv config-dist.php config.php
-    && mv admin/config-dist.php admin/config.php
